@@ -1,0 +1,1 @@
+docker run -d --name demoserver -v "$(pwd)/inputFile:/csvserver/inputdata" -e CSVSERVER_BORDER=Orange -p 9393:9300 demoserver:1.0 sh -c "chmod +x /demoserver/demoserver && /demoserver/demoserver"
