@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demoserver
+  labels:
+    app: demoserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demoserver
+  template:
+    metadata:
+      labels:
+        app: demoserver
+    spec:
+      volumes:
+        - name: volume
+          hostPath:
+            path: /mnt/c/Users/ogune/Downloads/csvserver/demoserver/
+            type: Directory
+        - name: file
+          hostPath:
+            path: /mnt/c/Users/ogune/Downloads/csvserver/demoserver/inputFile
+            type: FileOrCreate
+      initContainers:
+      - name: init-container 
+        image: demoserver:1.0
+        command: ["sh", "-c", "chmod +x /demoserver/demoserver"]
+        volumeMounts:
+            - name: volume
+              mountPath: /demoserver
+            - name: file
+              mountPath: /csvserver/inputdata
+      containers:
+      - name: demoserver
+        image: demoserver:1.0
+        command: ["/demoserver/demoserver"]
+        env:
+          - name: CSVSERVER_BORDER
+            value: "Orange"
+        volumeMounts:
+            - name: volume
+              mountPath: /demoserver
+            - name: file
+              mountPath: /csvserver/inputdata
+        ports:
+        - containerPort: 9300
